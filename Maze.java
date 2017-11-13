@@ -16,10 +16,6 @@ public class Maze
             }
     }
 
-    /*
-     *   This method draws the current state of the maze to the canvas.
-     *   Leave the method alone.
-     */
     public void draw()
     {
         for (int r = 0; r < board.length; r++)
@@ -108,3 +104,4 @@ public class Maze
         geerid.draw();
     }
 }
+//ragu 
