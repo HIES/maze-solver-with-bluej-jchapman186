@@ -2,6 +2,7 @@ public class Maze
 {
     private Cell[][] board;
     private final int DELAY = 200;
+    boolean isComplete = false;
 
     public Maze(int rows, int cols, int[][] map){
         StdDraw.setXscale(0, cols);
@@ -16,9 +17,9 @@ public class Maze
     }
 
     /*
-    *   This method draws the current state of the maze to the canvas.
-    *   Leave the method alone.
-    */
+     *   This method draws the current state of the maze to the canvas.
+     *   Leave the method alone.
+     */
     public void draw()
     {
         for (int r = 0; r < board.length; r++)
@@ -27,36 +28,80 @@ public class Maze
                 StdDraw.setPenColor(cell.getColor());
                 StdDraw.filledSquare(cell.getX(), cell.getY(), cell.getRadius());
             }
-            StdDraw.show();
+        StdDraw.show();
     }
 
     private boolean isValid(int row, int col)
     {
+        if(row >= 0 && row < board.length && col >= 0 && col < board[0].length)
+        {
+            if(board[row][col].isWall() || board[row][col].isVisited())
+            {return false;}
+            else
+            {return true;}
+        }
         return false;
     }
 
     private boolean isExit(int row, int col)
     {
-        return false;
+        if(row == board.length-1 && col == board[0].length-1)
+            return true;
+        else
+            return false;
     }
 
     public boolean findPath(int row, int col)
     {
-        return false;
+
+        boolean flag = isExit(row, col);
+        boolean valid = isValid(row, col);
+
+        if(valid == true){
+
+            board[row][col].setColor(StdDraw.BLUE);
+            draw();
+            StdDraw.pause(DELAY);
+            
+
+            board[row][col].visitCell();
+            draw();
+            StdDraw.pause(DELAY);
+            if(isExit(row, col) == true){
+                isComplete = true;
+                board[row][col].becomePath();
+            }
+            else{
+                if(!isComplete)
+                    findPath(row+1, col);
+                if(!isComplete)
+                    findPath(row, col+1);
+                if(!isComplete)
+                    findPath(row-1, col);
+                if(!isComplete)
+                    findPath(row, col-1);
+            }
+            if(isComplete == true)
+            {
+                board[row][col].becomePath();
+                StdDraw.pause(DELAY);
+            }
+        }
+        return isComplete;
     }
 
     public static void main(String[] args) {
         StdDraw.enableDoubleBuffering();
         int[][] maze = {{1,1,0,0,0,0,0,0,0,0},
-                        {0,1,1,1,1,0,1,1,1,0},
-                        {0,1,1,1,1,0,1,1,0,0},
-                        {0,1,0,1,1,1,1,1,1,0},
-                        {0,0,0,0,0,1,0,1,1,0},
-                        {0,1,1,1,1,1,0,1,1,0},
-                        {0,1,1,0,0,1,0,0,1,0},
-                        {0,1,1,0,1,1,0,1,1,0},
-                        {0,1,1,0,1,1,0,1,1,0},
-                        {0,0,0,0,0,0,0,0,1,1}};
+                {0,1,1,1,1,0,1,1,1,0},
+                {0,1,1,1,1,0,1,1,0,0},
+                {0,1,0,1,1,1,1,1,1,0},
+                {0,0,0,0,0,1,0,1,1,0},
+                {0,1,1,1,1,1,0,1,1,0},
+                {0,1,1,0,0,1,0,0,1,0},
+                {0,1,1,0,1,1,0,1,1,0},
+                {0,1,1,0,1,1,0,1,1,0},
+                {0,0,0,0,0,0,0,0,1,1}};
         Maze geerid = new Maze(maze.length, maze[0].length, maze);
         geerid.draw();
         geerid.findPath(0, 0);
